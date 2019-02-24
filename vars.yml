@@ -1,0 +1,5 @@
+
+---
+  static_content_file_name: static_content.zip
+  php_enablerepo: "remi,remi-php70"
+  php_enable_webserver: false

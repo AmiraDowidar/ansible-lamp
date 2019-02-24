@@ -1,8 +1,7 @@
 ---
 - hosts: all
-  vars:
-    php_enablerepo: "remi,remi-php70"
-    php_enable_webserver: false
+  vars_files:
+      - "vars.yml"
   pre_tasks:
     - name: Update apt cache.
       apt: update_cache=yes cache_valid_time=600
@@ -97,7 +96,7 @@
     - git:
       repo: 'https://github.com/drupal/drupal.git'
       dest: /tmp/drupal-app
-      version: release-8.6
+      version: HEAD
 
     - name: deploy drupal
       become: yes
