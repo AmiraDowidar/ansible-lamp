@@ -13,9 +13,13 @@
         - ntp
         - python
         - tcpdump
+        - apt-transport-https
+        - ca-certificates
+        - software-properties-common
         - wget
         - openssl
         - curl
+        - vim
     - name: install lamp stack
       become: yes
       become_user: root
@@ -23,8 +27,15 @@
         pkg:
           - apache2
           - mysql-server
-          - php7.0
-          - php7.0-mysql
+          - php
+          - php-mysql
+          - php-xml
+          - php-gd
+          - php-curl
+          - libapache2-mod-php
+          - php-cli
+          - php-mbstring
+          - php-zip
         state: present
         update_cache: yes
 
@@ -47,9 +58,14 @@
     - name: create target directory
       file: path=/var/www/dev state=directory mode=0755
 
-    - name: deploy index.html
+    - git:
+      repo: 'https://github.com/drupal/drupal.git'
+      dest: /tmp/drupal-app
+      version: release-8.6
+
+    - name: deploy drupal
       become: yes
       become_user: root
       copy:
-        src: /tmp/index.html
-        dest: /var/www/dev/index.html
+        src: /tmp/drupal-app
+        dest: /var/www/dev/drupal-app
