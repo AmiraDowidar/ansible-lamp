@@ -1,12 +1,55 @@
 ---
 - hosts: all
+  vars:
+    php_enablerepo: "remi,remi-php70"
+    php_enable_webserver: false
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=yes cache_valid_time=600
   tasks:
-  - name: Install Packages
-    apt: name= state=latest update_cache=yes
-    with_items:
-      - ntp
-      - python
-      - tcpdump
-      - wget
-      - openssl
-      - curl
+    - name: Install Packages
+      apt: name= state=latest update_cache=yes
+      with_items:
+        - ntp
+        - python
+        - tcpdump
+        - wget
+        - openssl
+        - curl
+    - name: install lamp stack
+      become: yes
+      become_user: root
+      apt:
+        pkg:
+          - apache2
+          - mysql-server
+          - php7.0
+          - php7.0-mysql
+        state: present
+        update_cache: yes
+
+    - name: start apache service
+      become: yes
+      become_user: root
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: start mysql service
+      become: yes
+      become_user: root
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: create target directory
+      file: path=/var/www/dev state=directory mode=0755
+
+    - name: deploy index.html
+      become: yes
+      become_user: root
+      copy:
+        src: /tmp/index.html
+        dest: /var/www/dev/index.html
